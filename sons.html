@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131b">
+  <link rel="stylesheet" href="sons.css" type="text/css"> <!--lien style css!-->
+  <title>Archives audio</title>
+</head>
+<body>
+  <main class="phone">
+    <div class="top">
+      <div>
+      <div class="status"><span>13:12</span><span>● ●</span></div>
+        <h1>Infoline </h1>
+        <p class="intro"> Vous pouvez maintenant écouter les enregistrements <br> pour trouver le lieu exact de la fête.</p>
+      </div>
+    </div>
+
+    <section class="grid" aria-label="Liste des fichiers audio">
+      <article class="audio-card">
+        <div class="row"><div class="art" aria-hidden="true">♫</div><div><h2>Enregistrement 01</h2></div></div>
+        <audio controls preload="none"><source src="sons/son1.mp3" type="audio/mpeg">Ton navigateur ne prend pas en charge la lecture audio.</audio>
+      </article>
+      <article class="audio-card">
+        <div class="row"><div class="art" aria-hidden="true">♫</div><div><h2>Enregistrement 02</h2></div></div>
+        <audio controls preload="none"><source src="sons/son2.mp3" type="audio/mpeg">Ton navigateur ne prend pas en charge la lecture audio.</audio>
+      </article>
+      <article class="audio-card">
+        <div class="row"><div class="art" aria-hidden="true">♫</div><div><h2>Enregistrement 03</h2></div></div>
+        <audio controls preload="none"><source src="sons/son3.mp3" type="audio/mpeg">Ton navigateur ne prend pas en charge la lecture audio.</audio>
+      </article>
+      <p class="intro"> Repérez le plan avec les trois numéros. Pensez-vous avoir trouver le bon lieu ? Passez à l'étape suivante. <br> ATTENTION : vous ne pourriez plus écouter les messages vocaux.</p>
+      <h3><a class="back" href="final.html"> Suivant</a></h3>
+    </section>
+  </main>
+
+  <script>
+    // Petite barrière de navigation pour cette démo ; elle ne protège pas des personnes déterminées.
+    if (sessionStorage.getItem("telephoneDeverrouille") !== "oui") {
+      window.location.replace(sessionStorage.getItem("vocalIntroEcoute") === "oui" ? "telephone.html" : "index.html");
+    }
+    document.getElementById("lockAgain").addEventListener("click", () => {
+      sessionStorage.removeItem("telephoneDeverrouille");
+    });
+    document.querySelectorAll("audio").forEach(audio => {
+      audio.addEventListener("error", () => {
+        // Le lecteur restera visible même si le fichier MP3 n'a pas encore été ajouté.
+        const card = audio.closest(".audio-card");
+        if (card && !card.querySelector(".missing")) {
+          const note = document.createElement("div");
+          note.className = "meta missing";
+          note.style.marginTop = "8px";
+          note.textContent = "Ajoute le fichier MP3 indiqué ci-dessus pour activer ce lecteur.";
+          card.appendChild(note);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

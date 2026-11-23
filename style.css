@@ -1,0 +1,32 @@
+:root { color-scheme: dark; --bg:#0b0e14; --panel:#171c28; --line:rgba(255,255,255,.12); --text:#f3f5fb; --muted:#9aa4b8; --accent:#ff0000; }
+
+    * { box-sizing:border-box; }
+    body {
+      margin:0; min-height:100vh; display:grid; place-items:center; padding:24px;
+      color:var(--text); font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:black;
+    }
+    .device {
+      width:min(100%,360px); height: 100%; padding: 26px 22px 22px; border:1px solid rgba(255,255,255,.15); border-radius:38px;
+      background:black;
+      box-shadow:0 30px 90px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .speaker { width:76px;height:5px;border-radius:9px;background:#3d4354;margin:0 auto 32px; }
+    .status { display:flex;justify-content:space-between;color:#c6ccda;font-size:12px;letter-spacing:.04em;margin-bottom:36px; }
+    .icon { width:76px;height:76px;display:grid;place-items:center;margin:0 auto 20px;border-radius:25px;
+      background:linear-gradient(145deg,rgba(139,157,255,.24),rgba(193,164,255,.15));border:1px solid rgba(177,181,255,.25);font-size:34px; }
+    .eyebrow { text-align:center;color:var(--accent);text-transform:uppercase;letter-spacing:.18em;font-size:10px;font-weight:750;margin-bottom:10px;}
+    h1 { text-align:center;font-size:24px;letter-spacing:-.04em;line-height:1.1;margin:0 0 12px; margin-bottom: 20px; }
+    .intro { color:var(--muted);font-size:14px;line-height:1.6;text-align:center;margin:0 auto 26px;max-width:315px; }
+    .audio-card { padding:18px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.045); }
+    .audio-title { display:flex;align-items:center;gap:12px;margin-bottom:13px; }
+    .wave { width:42px;height:42px;flex:0 0 auto;display:grid;place-items:center;border-radius:14px;background:rgba(169,154,255,.13);font-size:20px; }
+    .audio-title strong { display:block;font-size:14px;margin-bottom:4px; }
+    .audio-title span { color:var(--muted);font-size:12px; }
+    audio { display:block;width:100%;height:42px; }
+    .status-message { min-height:22px;margin:17px 0 0;text-align:center;color:var(--muted);font-size:12px;line-height:1.6; }
+    .status-message.ready { color:red; }
+    .foot { text-align:center;color:#737e93;font-size:10px;letter-spacing:.13em;margin-top:155px; }
+    .missing { color:#ffc0c7; }
+    @media (max-width:420px) { .device {padding:24px 18px 22px;border-radius:27px;} .status {margin-bottom:28px;} }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; } }

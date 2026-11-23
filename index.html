@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131b">
+  <link rel="stylesheet" href="style.css" type="text/css"> <!--lien style css!-->
+
+  <title>Message vocal</title>
+
+</head>
+<body>
+  <main class="device">
+    <div class="speaker" aria-hidden="true"></div>
+    <div class="status"><span>13:12</span><span>● ●</span></div>
+    <div class="icon" aria-hidden="true">♫</div>
+    <div class="eyebrow">Message vocal · 01</div>
+    <h1>Nouveau message <br> de +33 6 00 11 22 33 </h1>
+
+    <section class="audio-card" aria-label="Message vocal d'introduction">
+      <div class="audio-title">
+        <div class="wave" aria-hidden="true">♫</div>
+        <div><strong>Message d’introduction</strong></div>
+      </div>
+      <audio id="introAudio" controls preload="metadata" aria-label="Écouter le message vocal d’introduction">
+        <source src="sons/intro.mp3" type="audio/mpeg"> Votre navigateur ne prend pas en charge la lecture audio. </audio>
+    </section>
+    <p id="statusMessage" class="status-message" aria-live="polite">Appuyez sur Lecture pour écouter le vocal.</p>
+    <div class="foot">ÉCOUTEZ JUSQU’AU BOUT POUR CONTINUER</div>
+  </main>
+  <script>
+    // Recommencer depuis cette page réinitialise la progression précédente.
+    sessionStorage.removeItem("vocalIntroEcoute");
+    sessionStorage.removeItem("telephoneDeverrouille");
+
+    const audio = document.getElementById("introAudio");
+    const statusMessage = document.getElementById("statusMessage");
+    let transitionEnCours = false;
+
+    audio.addEventListener("play", () => {
+      if (!transitionEnCours) statusMessage.textContent = "Message en cours de lecture…";
+    });
+
+    audio.addEventListener("ended", () => {
+      if (transitionEnCours) return;
+      transitionEnCours = true;
+      sessionStorage.setItem("vocalIntroEcoute", "oui");
+      statusMessage.textContent = "Message terminé. Ouverture du téléphone…";
+      statusMessage.classList.add("ready");
+      window.setTimeout(() => { window.location.href = "telephone.html"; }, 900);
+    });
+
+    audio.addEventListener("error", () => {
+      statusMessage.textContent = "Fichier audio introuvable : ajoute ton vocal sous le nom sons/intro.mp3.";
+      statusMessage.classList.add("missing");
+    });
+  </script>
+</body>
+</html>

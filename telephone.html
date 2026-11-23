@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131b">
+    <link rel="stylesheet" href="style-telephone.css" type="text/css"> <!--lien style css!-->
+
+  <title>Téléphone verrouillé</title>
+
+</head>
+<body>
+  <main class="phone" aria-label="Écran de déverrouillage du téléphone">
+    <div class="status"><span>13:12</span><span>● ●</span></div>
+    <h1>Où est le Teknival ?</h1>
+    <p class="subtitle">Trouvez le code pour accéder aux informations. <br> Aidez-vous du flyer Teknival 33 pour avoir des indices !</p>
+
+    <div class="dots" id="dots" aria-label="Code saisi, 0 chiffre sur 4">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+    <div class="message" id="message" aria-live="polite">Saisissez le code à 10 chiffres</div>
+
+    <div class="keypad" aria-label="Clavier numérique">
+      <button class="key" data-digit="1"><span class="digit">1</span><span class="letters"> </span></button>
+      <button class="key" data-digit="2"><span class="digit">2</span><span class="letters">ABC</span></button>
+      <button class="key" data-digit="3"><span class="digit">3</span><span class="letters">DEF</span></button>
+      <button class="key" data-digit="4"><span class="digit">4</span><span class="letters">GHI</span></button>
+      <button class="key" data-digit="5"><span class="digit">5</span><span class="letters">JKL</span></button>
+      <button class="key" data-digit="6"><span class="digit">6</span><span class="letters">MNO</span></button>
+      <button class="key" data-digit="7"><span class="digit">7</span><span class="letters">PQRS</span></button>
+      <button class="key" data-digit="8"><span class="digit">8</span><span class="letters">TUV</span></button>
+      <button class="key" data-digit="9"><span class="digit">9</span><span class="letters">WXYZ</span></button>
+      <button class="key action" id="clear" aria-label="Effacer le code">Effacer</button>
+      <button class="key" data-digit="0"><span class="digit">0</span><span class="letters"> </span></button>
+      <button class="key ok" id="submit" aria-label="Valider le code">↵</button>
+    </div>
+    <div class="bottom-note"><a href="index.html" style="display:inline-block;margin-top:12px;color:#9aa4b8;text-decoration:none">↺ Recommencer le message vocal</a></div>
+  </main>
+
+  <script>
+    // L'interface du téléphone est accessible après la fin du message d'introduction.
+    if (sessionStorage.getItem("vocalIntroEcoute") !== "oui") {
+      window.location.replace("index.html");
+    }
+
+    // CHANGE ICI le code à 10 chiffres :
+    const CODE_CORRECT = "7919973004";
+    const LONGUEUR_CODE = 10;
+
+    let codeSaisi = "";
+    const dots = [...document.querySelectorAll(".dot")];
+    const message = document.getElementById("message");
+
+    function afficherCode() {
+      dots.forEach((dot, index) => dot.classList.toggle("filled", index < codeSaisi.length));
+      document.getElementById("dots").setAttribute("aria-label", `Code saisi, ${codeSaisi.length} chiffre(s) sur ${LONGUEUR_CODE}`);
+    }
+
+    function ajouterChiffre(chiffre) {
+      if (codeSaisi.length >= LONGUEUR_CODE) return;
+      codeSaisi += chiffre;
+      message.textContent = "Saisis ton code à 4 chiffres";
+      message.classList.remove("error");
+      afficherCode();
+      if (codeSaisi.length === LONGUEUR_CODE) verifierCode();
+    }
+
+    function verifierCode() {
+      if (codeSaisi === CODE_CORRECT) {
+        message.classList.remove("error");
+        message.textContent = "Code correct… déverrouillage";
+        // Cette autorisation sert à la démonstration ; ce n'est pas une sécurité forte.
+        sessionStorage.setItem("telephoneDeverrouille", "oui");
+        window.location.href = "sons.html";
+      } else {
+        message.textContent = "Code incorrect. Réessaie.";
+        message.classList.add("error");
+        codeSaisi = "";
+        afficherCode();
+      }
+    }
+
+    document.querySelectorAll("[data-digit]").forEach(button => {
+      button.addEventListener("click", () => ajouterChiffre(button.dataset.digit));
+    });
+    document.getElementById("submit").addEventListener("click", () => {
+      if (codeSaisi.length === LONGUEUR_CODE) verifierCode();
+      else {
+        message.textContent = `Il manque ${LONGUEUR_CODE - codeSaisi.length} chiffre(s).`;
+        message.classList.add("error");
+      }
+    });
+    document.getElementById("clear").addEventListener("click", () => {
+      codeSaisi = "";
+      message.textContent = "Saisis ton code à 4 chiffres";
+      message.classList.remove("error");
+      afficherCode();
+    });
+    document.addEventListener("keydown", event => {
+      if (/^[0-9]$/.test(event.key)) ajouterChiffre(event.key);
+      else if (event.key === "Backspace") {
+        codeSaisi = codeSaisi.slice(0, -1);
+        afficherCode();
+      } else if (event.key === "Enter") verifierCode();
+      else if (event.key === "Escape") document.getElementById("clear").click();
+    });
+  </script>
+</body>
+</html>

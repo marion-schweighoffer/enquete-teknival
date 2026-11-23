@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131b">
+    <link rel="stylesheet" href="final.css" type="text/css"> <!--lien style css!-->
+
+  <title>Téléphone verrouillé</title>
+
+</head>
+<body>
+  <main class="phone" aria-label="Écran de déverrouillage du téléphone">
+    <div class="status"><span>13:12</span><span>● ●</span></div>
+    <h1>Où est le Teknival ?</h1>
+    <p class="subtitle">Selon vous, dans quelle ville le Teknival a-t-il lieu ?</p>
+
+    <div class="dots" id="dots" aria-label="Code saisi, 0 chiffre sur 4">
+      <span class="dot"></span>
+      <img src="carte.pdf" alt="carte de Bourges avec 3 numéros" width="300">
+    </div>
+    <div class="message" id="message" aria-live="polite">
+    </div>
+
+    <div class="keypad" aria-label="Clavier numérique">
+      <button class="key" data-digit="1"><span class="digit">1</span></button>
+      <button class="key" data-digit="2"><span class="digit">2</span></button>
+      <button class="key" data-digit="3"><span class="digit">3</span></button>
+    </div>
+  </main>
+
+  <script>
+    // L'interface du téléphone est accessible après la fin du message d'introduction.
+    if (sessionStorage.getItem("vocalIntroEcoute") !== "oui") {
+      window.location.replace("index.html");
+    }
+
+    // CHANGE ICI le code à 10 chiffres :
+    const CODE_CORRECT = "3";
+    const LONGUEUR_CODE = 1;
+
+    let codeSaisi = "";
+    const dots = [...document.querySelectorAll(".dot")];
+    const message = document.getElementById("message");
+
+    function afficherCode() {
+      dots.forEach((dot, index) => dot.classList.toggle("filled", index < codeSaisi.length));
+      document.getElementById("dots").setAttribute("aria-label", `Code saisi, ${codeSaisi.length} chiffre(s) sur ${LONGUEUR_CODE}`);
+    }
+
+    function ajouterChiffre(chiffre) {
+      if (codeSaisi.length >= LONGUEUR_CODE) return;
+      codeSaisi += chiffre;
+      message.textContent = "Saisis ton code à 4 chiffres";
+      message.classList.remove("error");
+      afficherCode();
+      if (codeSaisi.length === LONGUEUR_CODE) verifierCode();
+    }
+
+    function verifierCode() {
+      if (codeSaisi === CODE_CORRECT) {
+        message.classList.remove("error");
+        message.textContent = "Code correct… déverrouillage";
+        // Cette autorisation sert à la démonstration ; ce n'est pas une sécurité forte.
+        sessionStorage.setItem("telephoneDeverrouille", "oui");
+        window.location.href = "juste.html";
+      } else {
+        message.textContent = "Code incorrect. Réessaie.";
+        message.classList.add("error");
+        codeSaisi = "";
+        window.location.href = "erreur.html";
+
+        
+        afficherCode();
+      }
+    }
+
+    document.querySelectorAll("[data-digit]").forEach(button => {
+      button.addEventListener("click", () => ajouterChiffre(button.dataset.digit));
+    });
+    document.getElementById("submit").addEventListener("click", () => {
+      if (codeSaisi.length === LONGUEUR_CODE) verifierCode();
+      else {
+        message.textContent = `Il manque ${LONGUEUR_CODE - codeSaisi.length} chiffre(s).`;
+        message.classList.add("error");
+      }
+    });
+    document.getElementById("clear").addEventListener("click", () => {
+      codeSaisi = "";
+      message.textContent = "Saisis ton code à 4 chiffres";
+      message.classList.remove("error");
+      afficherCode();
+    });
+    document.addEventListener("keydown", event => {
+      if (/^[0-9]$/.test(event.key)) ajouterChiffre(event.key);
+      else if (event.key === "Backspace") {
+        codeSaisi = codeSaisi.slice(0, -1);
+        afficherCode();
+      } else if (event.key === "Enter") verifierCode();
+      else if (event.key === "Escape") document.getElementById("clear").click();
+    });
+  </script>
+</body>
+</html>
